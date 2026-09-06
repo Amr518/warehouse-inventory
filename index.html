@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>منظومة الجرد المخزني الرقمي | Warehouse Inventory Tablet App</title>
+  <style>
+    :root {
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --info: #06b6d4;
+      --info-bg: rgba(6, 182, 212, 0.15);
+      --neutral-badge: #64748b;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Arabic', Tahoma, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      overflow-x: hidden;
+    }
+
+    /* Header & Top Bar */
+    header {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      font-size: 28px;
+    }
+
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-height: 44px; /* Touch friendly on tablet */
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-success:hover { filter: brightness(1.1); }
+    .btn-warning { background: var(--warning); color: #000; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-outline:hover {
+      background: var(--bg-card-hover);
+    }
+
+    /* KPI Metrics Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .metric-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .metric-card.total .metric-value { color: #fff; }
+    .metric-card.progress .metric-value { color: var(--primary); }
+    .metric-card.matched .metric-value { color: var(--success); }
+    .metric-card.deficit .metric-value { color: var(--danger); }
+    .metric-card.surplus .metric-value { color: var(--info); }
+    .metric-card.moved .metric-value { color: var(--warning); }
+
+    /* Controls & Filtering Bar */
+    .controls-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .filters-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .input-group label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .form-control {
+      background: #0b1120;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      min-height: 44px;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .search-group {
+      flex: 2;
+      min-width: 240px;
+    }
+
+    /* Filter Pills */
+    .pills-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .pill {
+      background: #0b1120;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    /* Inventory Table Container */
+    .table-container {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: auto;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: #111c30;
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 12px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 2px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Row Highlights */
+    tr.status-matched { background-color: rgba(16, 185, 129, 0.04); }
+    tr.status-deficit { background-color: rgba(239, 68, 68, 0.06); }
+    tr.status-surplus { background-color: rgba(6, 182, 212, 0.06); }
+    tr.status-uncounted { opacity: 0.9; }
+    tr.is-moved { border-right: 4px solid var(--warning); }
+
+    .item-code {
+      font-family: monospace;
+      font-weight: 700;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .item-name {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .location-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85rem;
+      background: #0f172a;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Stepper & Input for actual count */
+    .qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stepper-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .stepper-btn:active {
+      background: var(--primary);
+    }
+
+    .qty-input {
+      width: 72px;
+      height: 40px;
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #0b1120;
+      color: #fff;
+    }
+
+    .qty-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Difference Badges */
+    .variance-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .variance-uncounted {
+      background: var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .variance-matched {
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .variance-deficit {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .variance-surplus {
+      background: var(--info-bg);
+      border: 1px solid var(--info);
+      color: var(--info);
+    }
+
+    /* Move Drawer Select */
+    .drawer-select {
+      background: #0b1120;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      min-height: 40px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .drawer-select.moved {
+      border-color: var(--warning);
+      background: rgba(245, 158, 11, 0.1);
+      color: #fef08a;
+      font-weight: bold;
+    }
+
+    .match-action-btn {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .match-action-btn:active {
+      background: var(--success);
+      color: #fff;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+      display: none;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body { padding: 8px; }
+      header { flex-direction: column; align-items: stretch; }
+      .header-actions { justify-content: stretch; }
+      .header-actions .btn { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <span class="brand-icon">📦</span>
+      <div>
+        <h1>منظومة الجرد المخزني الرقمي (10" Tablet)</h1>
+        <div class="brand-subtitle">نظام الجرد الميداني بدون ورق وبدون إنترنت • متوافق مع Power BI</div>
+      </div>
+    </div>
+    <div class="sync-badge" id="saveBadge">
+      <span>●</span> تم الحفظ تلقائياً في التابلت
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" onclick="triggerImport()" title="استيراد شيت الأصناف">
+        📥 استيراد بيانات
+      </button>
+      <input type="file" id="csvFileInput" accept=".csv, .txt" style="display: none;" onchange="handleFileImport(event)">
+      <button class="btn btn-primary" onclick="openAddModal()">
+        ➕ صنف مفاجئ
+      </button>
+      <button class="btn btn-success" onclick="exportPowerBIReport()">
+        📊 تصدير لـ Power BI
+      </button>
+      <button class="btn btn-danger" onclick="resetInventoryConfirm()" title="بدء جرد جديد">
+        🔄 تصفير
+      </button>
+    </div>
+  </header>
+
+  <!-- Metrics Dashboard -->
+  <div class="metrics-grid">
+    <div class="metric-card total">
+      <span class="metric-title">إجمالي الأصناف</span>
+      <span class="metric-value" id="statTotal">0</span>
+    </div>
+    <div class="metric-card progress">
+      <span class="metric-title">نسبة الإنجاز</span>
+      <span class="metric-value" id="statProgress">0%</span>
+    </div>
+    <div class="metric-card matched">
+      <span class="metric-title">مطابق (0)</span>
+      <span class="metric-value" id="statMatched">0</span>
+    </div>
+    <div class="metric-card deficit">
+      <span class="metric-title">عجز (-)</span>
+      <span class="metric-value" id="statDeficit">0</span>
+    </div>
+    <div class="metric-card surplus">
+      <span class="metric-title">زيادة (+)</span>
+      <span class="metric-value" id="statSurplus">0</span>
+    </div>
+    <div class="metric-card moved">
+      <span class="metric-title">تم نقله</span>
+      <span class="metric-value" id="statMoved">0</span>
+    </div>
+  </div>
+
+  <!-- Controls & Search -->
+  <div class="controls-panel">
+    <div class="filters-row">
+      <div class="input-group search-group">
+        <label>🔍 بحث سريع (بالكود أو اسم القطعة)</label>
+        <input type="text" id="searchInput" class="form-control" placeholder="اكتب رقم الكود أو جزء من اسم القطعة..." oninput="renderTable()">
+      </div>
+      <div class="input-group">
+        <label>🏷️ القسم (Section)</label>
+        <select id="sectionFilter" class="form-control" onchange="onSectionFilterChange()">
+          <option value="ALL">كل الأقسام</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>🗄️ الدرج (Drawer)</label>
+        <select id="drawerFilter" class="form-control" onchange="renderTable()">
+          <option value="ALL">كل الأدراج</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Status Filter Pills -->
+    <div class="pills-bar">
+      <div class="pill active" data-filter="ALL" onclick="setStatusFilter('ALL', this)">الكل (<span id="countPillAll">0</span>)</div>
+      <div class="pill" data-filter="UNCOUNTED" onclick="setStatusFilter('UNCOUNTED', this)">لم يجرد (<span id="countPillUncounted">0</span>)</div>
+      <div class="pill" data-filter="MATCHED" onclick="setStatusFilter('MATCHED', this)">مطابق (<span id="countPillMatched">0</span>)</div>
+      <div class="pill" data-filter="DEFICIT" onclick="setStatusFilter('DEFICIT', this)">عجز (<span id="countPillDeficit">0</span>)</div>
+      <div class="pill" data-filter="SURPLUS" onclick="setStatusFilter('SURPLUS', this)">زيادة (<span id="countPillSurplus">0</span>)</div>
+      <div class="pill" data-filter="MOVED" onclick="setStatusFilter('MOVED', this)">منقول (<span id="countPillMoved">0</span>)</div>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>كود الصنف</th>
+          <th>اسم القطعة</th>
+          <th>الموقع الأصلي</th>
+          <th style="text-align: center;">الدفتري</th>
+          <th style="text-align: center;">الرصيد الفعلي</th>
+          <th style="text-align: center;">الفرق</th>
+          <th>نقل لدرج آخر</th>
+          <th style="text-align: center;">إجراء سريع</th>
+        </tr>
+      </thead>
+      <tbody id="inventoryTableBody">
+        <!-- Rows rendered via JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add Unlisted Item Modal -->
+  <div class="modal-backdrop" id="addItemModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>➕ إضافة صنف مفاجئ / غير مدرج</h3>
+        <button class="modal-close" onclick="closeAddModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <label>كود الصنف (Item Code)</label>
+          <input type="text" id="newCode" class="form-control" placeholder="مثال: 9901">
+        </div>
+        <div class="input-group">
+          <label>اسم الصنف / القطعة</label>
+          <input type="text" id="newName" class="form-control" placeholder="مثال: رولمان بلي غير مقيد">
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <div class="input-group">
+            <label>القسم</label>
+            <select id="newSection" class="form-control"></select>
+          </div>
+          <div class="input-group">
+            <label>الدرج</label>
+            <select id="newDrawer" class="form-control"></select>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>الكمية الفعلية الموجودة</label>
+          <input type="number" id="newQty" class="form-control" value="1" min="1">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeAddModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitNewItem()">إضافة وحفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Storage Key
+    const STORAGE_KEY = 'warehouse_inventory_v1';
+    
+    // Global State
+    let inventoryData = [];
+    let activeStatusFilter = 'ALL';
+
+    // Fallback Initial Sample Data
+    const defaultSampleData = [
+      { code: "10101", name: "رولمان بلي 6204-2RS", section: "قسم 1", drawer: "درج 1", bookQty: 20, actualQty: null, newDrawer: "", moved: false },
+      { code: "10102", name: "رولمان بلي 6205-ZZ", section: "قسم 1", drawer: "درج 1", bookQty: 15, actualQty: null, newDrawer: "", moved: false },
+      { code: "10103", name: "رولمان بلي 6306-2RS", section: "قسم 1", drawer: "درج 2", bookQty: 8, actualQty: null, newDrawer: "", moved: false },
+      { code: "10104", name: "أويل سيل 25x47x7 FKM", section: "قسم 1", drawer: "درج 3", bookQty: 45, actualQty: null, newDrawer: "", moved: false },
+      { code: "10105", name: "أويل سيل 30x52x8 NBR", section: "قسم 1", drawer: "درج 3", bookQty: 30, actualQty: null, newDrawer: "", moved: false },
+      { code: "10106", name: "تيلة داخلية 47 مم DIN 472", section: "قسم 1", drawer: "درج 4", bookQty: 100, actualQty: null, newDrawer: "", moved: false },
+      { code: "10107", name: "تيلة خارجية 25 مم DIN 471", section: "قسم 1", drawer: "درج 4", bookQty: 120, actualQty: null, newDrawer: "", moved: false },
+      { code: "10201", name: "حساس تقاربي أسطواني M12 NPN", section: "قسم 2", drawer: "درج 1", bookQty: 12, actualQty: null, newDrawer: "", moved: false },
+      { code: "10202", name: "حساس تقاربي أسطواني M18 PNP", section: "قسم 2", drawer: "درج 1", bookQty: 10, actualQty: null, newDrawer: "", moved: false },
+      { code: "10203", name: "إنكودر دوار 1024 نبضة 24V", section: "قسم 2", drawer: "درج 2", bookQty: 4, actualQty: null, newDrawer: "", moved: false },
+      { code: "10204", name: "ريلاي Finder 24VDC 8 Pin", section: "قسم 2", drawer: "درج 3", bookQty: 25, actualQty: null, newDrawer: "", moved: false },
+      { code: "10205", name: "قاعدة ريلاي Finder 8 Pin", section: "قسم 2", drawer: "درج 3", bookQty: 25, actualQty: null, newDrawer: "", moved: false },
+      { code: "10206", name: "فيوز سيراميك 5x20 2A بطيء", section: "قسم 2", drawer: "درج 4", bookQty: 150, actualQty: null, newDrawer: "", moved: false },
+      { code: "10207", name: "قاطع شنايدر 10A أحادي C60", section: "قسم 2", drawer: "درج 5", bookQty: 8, actualQty: null, newDrawer: "", moved: false },
+      { code: "10401", name: "سير ناقل توقيت T10 طول 600", section: "قسم 4", drawer: "درج 1", bookQty: 6, actualQty: null, newDrawer: "", moved: false },
+      { code: "10402", name: "سير V-Belt A-48 مسنن", section: "قسم 4", drawer: "درج 2", bookQty: 14, actualQty: null, newDrawer: "", moved: false },
+      { code: "10403", name: "بستم هواء Festo DNC-40-100", section: "قسم 4", drawer: "درج 3", bookQty: 3, actualQty: null, newDrawer: "", moved: false },
+      { code: "10404", name: "صمام هواء كهربائي 5/2 24VDC", section: "قسم 4", drawer: "درج 4", bookQty: 7, actualQty: null, newDrawer: "", moved: false },
+      { code: "10405", name: "فيتنج هواء سريع G1/4 خرطوم 8", section: "قسم 4", drawer: "درج 5", bookQty: 80, actualQty: null, newDrawer: "", moved: false },
+      { code: "10406", name: "مانومتر ضغط 0-10 بار عمودي", section: "قسم 4", drawer: "درج 6", bookQty: 5, actualQty: null, newDrawer: "", moved: false },
+      { code: "10501", name: "سخان خرطوشي 220V 500W طول 150", section: "قسم 5", drawer: "درج 1", bookQty: 18, actualQty: null, newDrawer: "", moved: false },
+      { code: "10502", name: "ترموستات حرارة PT100 M6", section: "قسم 5", drawer: "درج 2", bookQty: 9, actualQty: null, newDrawer: "", moved: false },
+      { code: "10503", name: "كونتاكتور سيمنز 12A بوبا 220V", section: "قسم 5", drawer: "درج 3", bookQty: 6, actualQty: null, newDrawer: "", moved: false },
+      { code: "10504", name: "أوفرلود حراري سيمنز 7-10A", section: "قسم 5", drawer: "درج 3", bookQty: 4, actualQty: null, newDrawer: "", moved: false },
+      { code: "10505", name: "زرار طوارئ غاطس مع إضاءة 24V", section: "قسم 5", drawer: "درج 4", bookQty: 12, actualQty: null, newDrawer: "", moved: false }
+    ];
+
+    // Initialize App
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      populateSectionSelectors();
+      renderTable();
+    });
+
+    // Load from LocalStorage
+    function loadData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          inventoryData = JSON.parse(saved);
+        } catch (e) {
+          inventoryData = defaultSampleData;
+        }
+      } else {
+        inventoryData = defaultSampleData;
+        saveData();
+      }
+    }
+
+    // Save to LocalStorage with auto indicator
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(inventoryData));
+      const badge = document.getElementById('saveBadge');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      badge.innerHTML = `<span>●</span> تم الحفظ تلقائياً (${timeStr})`;
+      badge.style.borderColor = 'var(--success)';
+      updateStats();
+    }
+
+    // Populate Section & Drawer Filters
+    function populateSectionSelectors() {
+      const sectionFilter = document.getElementById('sectionFilter');
+      const newSection = document.getElementById('newSection');
+      
+      // Extract unique sections
+      const sections = new Set();
+      inventoryData.forEach(item => {
+        if (item.section) sections.add(item.section);
+      });
+      // Ensure 1 to 25 exist
+      for (let i = 1; i <= 25; i++) {
+        sections.add(`قسم ${i}`);
+      }
+      
+      const sortedSections = Array.from(sections).sort((a, b) => {
+        const numA = parseInt(a.replace(/\D/g, '')) || 0;
+        const numB = parseInt(b.replace(/\D/g, '')) || 0;
+        return numA - numB;
+      });
+
+      // Clear & Populate
+      sectionFilter.innerHTML = '<option value="ALL">كل الأقسام</option>';
+      newSection.innerHTML = '';
+      sortedSections.forEach(sec => {
+        const opt1 = document.createElement('option');
+        opt1.value = sec;
+        opt1.textContent = sec;
+        sectionFilter.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = sec;
+        opt2.textContent = sec;
+        newSection.appendChild(opt2);
+      });
+
+      populateDrawerOptions();
+    }
+
+    function populateDrawerOptions() {
+      const drawerFilter = document.getElementById('drawerFilter');
+      const newDrawer = document.getElementById('newDrawer');
+
+      drawerFilter.innerHTML = '<option value="ALL">كل الأدراج</option>';
+      newDrawer.innerHTML = '';
+
+      for (let d = 1; d <= 20; d++) {
+        const dName = `درج ${d}`;
+        const opt1 = document.createElement('option');
+        opt1.value = dName;
+        opt1.textContent = dName;
+        drawerFilter.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = dName;
+        opt2.textContent = dName;
+        newDrawer.appendChild(opt2);
+      }
+    }
+
+    function onSectionFilterChange() {
+      renderTable();
+    }
+
+    // Filter status pills
+    function setStatusFilter(filter, el) {
+      activeStatusFilter = filter;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      renderTable();
+    }
+
+    // Calculate item status
+    function getItemStatus(item) {
+      if (item.actualQty === null || item.actualQty === undefined || item.actualQty === '') {
+        return 'UNCOUNTED';
+      }
+      const actual = Number(item.actualQty);
+      const book = Number(item.bookQty);
+      if (actual === book) return 'MATCHED';
+      if (actual < book) return 'DEFICIT';
+      return 'SURPLUS';
+    }
+
+    // Render Table Rows
+    function renderTable() {
+      const tbody = document.getElementById('inventoryTableBody');
+      const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+      const secFilter = document.getElementById('sectionFilter').value;
+      const drwFilter = document.getElementById('drawerFilter').value;
+
+      tbody.innerHTML = '';
+
+      // Available drawers for transfer
+      const drawerOptionsHtml = [];
+      for (let d = 1; d <= 20; d++) {
+        drawerOptionsHtml.push(`درج ${d}`);
+      }
+
+      let visibleCount = 0;
+
+      inventoryData.forEach((item, index) => {
+        const status = getItemStatus(item);
+
+        // Section Filter
+        if (secFilter !== 'ALL' && item.section !== secFilter) return;
+
+        // Drawer Filter
+        const effectiveDrawer = item.moved && item.newDrawer ? item.newDrawer : item.drawer;
+        if (drwFilter !== 'ALL' && effectiveDrawer !== drwFilter && item.drawer !== drwFilter) return;
+
+        // Status Filter
+        if (activeStatusFilter === 'MOVED' && !item.moved) return;
+        if (activeStatusFilter !== 'ALL' && activeStatusFilter !== 'MOVED' && status !== activeStatusFilter) return;
+
+        // Search Term Filter
+        if (searchTerm) {
+          const matchCode = (item.code || '').toLowerCase().includes(searchTerm);
+          const matchName = (item.name || '').toLowerCase().includes(searchTerm);
+          if (!matchCode && !matchName) return;
+        }
+
+        visibleCount++;
+
+        // Variance & Badges
+        let diff = null;
+        let diffHtml = '<span class="variance-badge variance-uncounted">-</span>';
+        let rowClass = 'status-uncounted';
+
+        if (status !== 'UNCOUNTED') {
+          diff = Number(item.actualQty) - Number(item.bookQty);
+          if (diff === 0) {
+            diffHtml = '<span class="variance-badge variance-matched">0</span>';
+            rowClass = 'status-matched';
+          } else if (diff < 0) {
+            diffHtml = `<span class="variance-badge variance-deficit">${diff}</span>`;
+            rowClass = 'status-deficit';
+          } else {
+            diffHtml = `<span class="variance-badge variance-surplus">+${diff}</span>`;
+            rowClass = 'status-surplus';
+          }
+        }
+
+        if (item.moved) {
+          rowClass += ' is-moved';
+        }
+
+        // Drawers options select
+        let drawerSelectHtml = `<select class="drawer-select ${item.moved ? 'moved' : ''}" onchange="changeItemDrawer(${index}, this.value)">`;
+        drawerSelectHtml += `<option value="">(الدرج الأصلي: ${item.drawer})</option>`;
+        drawerOptionsHtml.forEach(d => {
+          const isSelected = item.newDrawer === d;
+          drawerSelectHtml += `<option value="${d}" ${isSelected ? 'selected' : ''}>${d} ${d === item.drawer ? '★ الأصلي' : ''}</option>`;
+        });
+        drawerSelectHtml += `</select>`;
+
+        const tr = document.createElement('tr');
+        tr.className = rowClass;
+        tr.innerHTML = `
+          <td><span class="item-code">${escapeHtml(item.code)}</span></td>
+          <td>
+            <div class="item-name">${escapeHtml(item.name)}</div>
+          </td>
+          <td>
+            <div class="location-badge">
+              <span>🏷️ ${escapeHtml(item.section)}</span>
+              <span>•</span>
+              <span>🗄️ ${escapeHtml(item.drawer)}</span>
+            </div>
+          </td>
+          <td style="text-align: center; font-weight: 700; font-size: 1.1rem;">
+            ${item.bookQty}
+          </td>
+          <td style="text-align: center;">
+            <div class="qty-stepper">
+              <button class="stepper-btn" onclick="stepQty(${index}, -1)" title="تقليل">-</button>
+              <input type="number" 
+                     class="qty-input" 
+                     value="${item.actualQty !== null ? item.actualQty : ''}" 
+                     placeholder="-"
+                     min="0"
+                     inputmode="numeric"
+                     onchange="updateActualQty(${index}, this.value)"
+                     onfocus="this.select()">
+              <button class="stepper-btn" onclick="stepQty(${index}, 1)" title="زيادة">+</button>
+            </div>
+          </td>
+          <td style="text-align: center;">
+            ${diffHtml}
+          </td>
+          <td>
+            ${drawerSelectHtml}
+          </td>
+          <td style="text-align: center;">
+            <button class="match-action-btn" onclick="setAsMatched(${index})" title="تعيين الفعلي = الدفتري">
+              ✓ مطابق (${item.bookQty})
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (visibleCount === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
+              <div>لا توجد أصناف تطابق شروط البحث أو الفلتر المحددة</div>
+            </td>
+          </tr>
+        `;
+      }
+
+      updateStats();
+    }
+
+    // Safe HTML Escape
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[m]));
+    }
+
+    // Input handlers
+    function updateActualQty(index, value) {
+      if (value === '' || value === null) {
+        inventoryData[index].actualQty = null;
+      } else {
+        inventoryData[index].actualQty = Math.max(0, parseInt(value, 10) || 0);
+      }
+      inventoryData[index].timestamp = new Date().toISOString();
+      saveData();
+      renderTable();
+    }
+
+    function stepQty(index, delta) {
+      let current = inventoryData[index].actualQty;
+      if (current === null || current === undefined) {
+        current = inventoryData[index].bookQty || 0;
+      }
+      let newVal = Math.max(0, Number(current) + delta);
+      inventoryData[index].actualQty = newVal;
+      inventoryData[index].timestamp = new Date().toISOString();
+      saveData();
+      renderTable();
+    }
+
+    function setAsMatched(index) {
+      inventoryData[index].actualQty = inventoryData[index].bookQty;
+      inventoryData[index].timestamp = new Date().toISOString();
+      saveData();
+      renderTable();
+    }
+
+    function changeItemDrawer(index, newDrawerVal) {
+      if (!newDrawerVal || newDrawerVal === inventoryData[index].drawer) {
+        inventoryData[index].newDrawer = "";
+        inventoryData[index].moved = false;
+      } else {
+        inventoryData[index].newDrawer = newDrawerVal;
+        inventoryData[index].moved = true;
+      }
+      saveData();
+      renderTable();
+    }
+
+    // Update Metrics Dashboard & Pills
+    function updateStats() {
+      const total = inventoryData.length;
+      let uncounted = 0;
+      let matched = 0;
+      let deficit = 0;
+      let surplus = 0;
+      let moved = 0;
+
+      inventoryData.forEach(item => {
+        if (item.moved) moved++;
+        const status = getItemStatus(item);
+        if (status === 'UNCOUNTED') uncounted++;
+        else if (status === 'MATCHED') matched++;
+        else if (status === 'DEFICIT') deficit++;
+        else if (status === 'SURPLUS') surplus++;
+      });
+
+      const counted = total - uncounted;
+      const progressPercent = total > 0 ? Math.round((counted / total) * 100) : 0;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statProgress').textContent = `${progressPercent}%`;
+      document.getElementById('statMatched').textContent = matched;
+      document.getElementById('statDeficit').textContent = deficit;
+      document.getElementById('statSurplus').textContent = surplus;
+      document.getElementById('statMoved').textContent = moved;
+
+      // Pills Counts
+      document.getElementById('countPillAll').textContent = total;
+      document.getElementById('countPillUncounted').textContent = uncounted;
+      document.getElementById('countPillMatched').textContent = matched;
+      document.getElementById('countPillDeficit').textContent = deficit;
+      document.getElementById('countPillSurplus').textContent = surplus;
+      document.getElementById('countPillMoved').textContent = moved;
+    }
+
+    // Modal Operations
+    function openAddModal() {
+      document.getElementById('addItemModal').classList.add('active');
+      document.getElementById('newCode').focus();
+    }
+
+    function closeAddModal() {
+      document.getElementById('addItemModal').classList.remove('active');
+      document.getElementById('newCode').value = '';
+      document.getElementById('newName').value = '';
+      document.getElementById('newQty').value = '1';
+    }
+
+    function submitNewItem() {
+      const code = document.getElementById('newCode').value.trim() || `NEW-${Date.now().toString().slice(-4)}`;
+      const name = document.getElementById('newName').value.trim();
+      const section = document.getElementById('newSection').value;
+      const drawer = document.getElementById('newDrawer').value;
+      const qty = parseInt(document.getElementById('newQty').value, 10) || 1;
+
+      if (!name) {
+        alert('يرجى كتابة اسم الصنف / القطعة');
+        return;
+      }
+
+      const newItem = {
+        code: code,
+        name: name,
+        section: section,
+        drawer: drawer,
+        bookQty: 0, // Not in original book record -> treated as surplus
+        actualQty: qty,
+        newDrawer: "",
+        moved: false,
+        isUnlisted: true,
+        timestamp: new Date().toISOString()
+      };
+
+      inventoryData.unshift(newItem);
+      saveData();
+      closeAddModal();
+      renderTable();
+    }
+
+    // File Import Handling (CSV)
+    function triggerImport() {
+      document.getElementById('csvFileInput').click();
+    }
+
+    function handleFileImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const text = event.target.result;
+        parseAndLoadCSV(text);
+      };
+      reader.readAsText(file);
+    }
+
+    function parseAndLoadCSV(text) {
+      const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
+      if (lines.length < 2) {
+        alert('الملف فارغ أو لا يحتوي على صفوف بيانات كافية.');
+        return;
+      }
+
+      // Simple CSV parse with header detection
+      const delimiter = lines[0].includes(';') ? ';' : (lines[0].includes('\t') ? '\t' : ',');
+      const headers = lines[0].split(delimiter).map(h => h.trim().toLowerCase().replace(/"/g, ''));
+
+      const codeIdx = headers.findIndex(h => h.includes('code') || h.includes('كود') || h.includes('رقم'));
+      const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('اسم') || h.includes('قطعة') || h.includes('صنف'));
+      const secIdx = headers.findIndex(h => h.includes('sec') || h.includes('قسم'));
+      const drwIdx = headers.findIndex(h => h.includes('draw') || h.includes('درج'));
+      const qtyIdx = headers.findIndex(h => h.includes('qty') || h.includes('book') || h.includes('كمية') || h.includes('رصيد'));
+
+      const newItems = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(delimiter).map(c => c.trim().replace(/^"|"$/g, ''));
+        if (row.length < 2) continue;
+
+        const code = codeIdx !== -1 ? row[codeIdx] : row[0];
+        const name = nameIdx !== -1 ? row[nameIdx] : row[1];
+        const section = secIdx !== -1 ? row[secIdx] : (row[2] || 'قسم 1');
+        const drawer = drwIdx !== -1 ? row[drwIdx] : (row[3] || 'درج 1');
+        const bookQty = qtyIdx !== -1 ? (parseInt(row[qtyIdx], 10) || 0) : (parseInt(row[4], 10) || 0);
+
+        newItems.push({
+          code: code || `ITEM-${i}`,
+          name: name || `قطعة ${i}`,
+          section: section || 'قسم 1',
+          drawer: drawer || 'درج 1',
+          bookQty: bookQty,
+          actualQty: null,
+          newDrawer: "",
+          moved: false
+        });
+      }
+
+      if (newItems.length > 0) {
+        if (confirm(`تم قراءة ${newItems.length} صنف من الملف بنجاح. هل تريد استبدال الجرد الحالي بهذه البيانات؟`)) {
+          inventoryData = newItems;
+          saveData();
+          populateSectionSelectors();
+          renderTable();
+          alert('تم استيراد البيانات بنجاح!');
+        }
+      } else {
+        alert('لم يتم العثور على بيانات صالحة في الملف.');
+      }
+    }
+
+    // Export Power BI Ready Report (CSV with UTF-8 BOM)
+    function exportPowerBIReport() {
+      if (inventoryData.length === 0) {
+        alert('لا توجد بيانات للتصدير!');
+        return;
+      }
+
+      // Headers formatted for Power BI
+      const headers = [
+        "Item_Code",
+        "Item_Name",
+        "Original_Section",
+        "Original_Drawer",
+        "Book_Qty",
+        "Actual_Qty",
+        "Variance_Qty",
+        "Status_Arabic",
+        "Status_English",
+        "Is_Counted",
+        "Is_Moved",
+        "New_Section",
+        "New_Drawer",
+        "Timestamp"
+      ];
+
+      const rows = [];
+      rows.push(headers.join(","));
+
+      inventoryData.forEach(item => {
+        const status = getItemStatus(item);
+        const isCounted = status !== 'UNCOUNTED';
+        const actual = isCounted ? Number(item.actualQty) : "";
+        const variance = isCounted ? (Number(item.actualQty) - Number(item.bookQty)) : "";
+        
+        let statusAr = "لم يجرد";
+        let statusEn = "Uncounted";
+        if (status === 'MATCHED') { statusAr = "مطابق"; statusEn = "Matched"; }
+        else if (status === 'DEFICIT') { statusAr = "عجز"; statusEn = "Deficit"; }
+        else if (status === 'SURPLUS') { statusAr = "زيادة"; statusEn = "Surplus"; }
+
+        const row = [
+          `"${(item.code || '').replace(/"/g, '""')}"`,
+          `"${(item.name || '').replace(/"/g, '""')}"`,
+          `"${(item.section || '').replace(/"/g, '""')}"`,
+          `"${(item.drawer || '').replace(/"/g, '""')}"`,
+          item.bookQty,
+          actual !== "" ? actual : "",
+          variance !== "" ? variance : "",
+          `"${statusAr}"`,
+          `"${statusEn}"`,
+          isCounted ? "1" : "0",
+          item.moved ? "1" : "0",
+          `"${(item.section || '').replace(/"/g, '""')}"`,
+          `"${(item.moved && item.newDrawer ? item.newDrawer : item.drawer).replace(/"/g, '""')}"`,
+          `"${item.timestamp || new Date().toISOString()}"`
+        ];
+
+        rows.push(row.join(","));
+      });
+
+      const csvContent = "\uFEFF" + rows.join("\r\n"); // Add UTF-8 BOM for Excel & Power BI Arabic support
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Warehouse_Inventory_PowerBI_${dateStr}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Reset Inventory confirmation
+    function resetInventoryConfirm() {
+      const choice = confirm("⚠️ تنبيه: هل تريد إعادة تعيين الأرصدة المجرودة إلى (غير مجرود)؟\n\n- اضغط OK لتصفير الأرصدة الفعلية مع الإبقاء على الأصناف.\n- اضغط Cancel للإلغاء.");
+      if (choice) {
+        inventoryData.forEach(item => {
+          item.actualQty = null;
+          item.newDrawer = "";
+          item.moved = false;
+        });
+        saveData();
+        renderTable();
+      }
+    }
+  </script>
+</body>
+</html>
