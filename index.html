@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>منظومة الجرد المخزني الرقمي | Warehouse Inventory Tablet App</title>
+  <title>نظام إدارة وجرد المخازن | Warehouse Inventory Management System</title>
   <style>
     :root {
-      --bg-main: #0f172a;
-      --bg-card: #1e293b;
-      --bg-card-hover: #334155;
-      --border-color: #334155;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.15);
-      --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.15);
-      --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.15);
-      --info: #06b6d4;
-      --info-bg: rgba(6, 182, 212, 0.15);
-      --neutral-badge: #64748b;
-      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Arabic', Tahoma, sans-serif;
+      --bg-page: #f1f5f9;
+      --bg-panel: #ffffff;
+      --border: #cbd5e1;
+      --border-dark: #94a3b8;
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --success: #16a34a;
+      --success-light: #dcfce7;
+      --danger: #dc2626;
+      --danger-light: #fee2e2;
+      --warning: #d97706;
+      --warning-light: #fef3c7;
+      --info-light: #e0f2fe;
+      --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Arial, sans-serif;
     }
 
     * {
@@ -34,68 +32,49 @@
     }
 
     body {
-      font-family: var(--font-family);
-      background-color: var(--bg-main);
-      color: var(--text-main);
+      font-family: var(--font);
+      background-color: var(--bg-page);
+      color: var(--text-dark);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       padding: 12px;
-      overflow-x: hidden;
+      font-size: 14px;
     }
 
-    /* Header & Top Bar */
-    header {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 12px;
+    /* Top Enterprise Header */
+    .top-header {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 18px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-icon {
-      font-size: 28px;
-    }
-
-    .brand h1 {
+    .system-title h1 {
       font-size: 1.25rem;
       font-weight: 700;
-      color: #fff;
+      color: #0f172a;
+      letter-spacing: -0.3px;
     }
 
-    .brand-subtitle {
-      font-size: 0.8rem;
+    .system-title p {
+      font-size: 0.85rem;
       color: var(--text-muted);
-    }
-
-    .sync-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid var(--success);
-      color: var(--success);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      margin-top: 2px;
     }
 
     .header-actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     /* Buttons */
@@ -104,575 +83,719 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 10px 16px;
-      font-size: 0.95rem;
+      padding: 8px 14px;
+      font-size: 0.9rem;
       font-weight: 600;
-      border-radius: 8px;
-      border: none;
+      border-radius: 5px;
+      border: 1px solid transparent;
       cursor: pointer;
-      transition: all 0.15s ease;
-      min-height: 44px; /* Touch friendly on tablet */
+      min-height: 40px;
+      transition: background-color 0.15s ease;
     }
 
-    .btn:active {
-      transform: scale(0.97);
-    }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-default { background: #fff; border-color: var(--border-dark); color: var(--text-dark); }
+    .btn-default:hover { background: #f8fafc; }
 
     .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-success:hover { filter: brightness(1.1); }
-    .btn-warning { background: var(--warning); color: #000; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-    }
-    .btn-outline:hover {
-      background: var(--bg-card-hover);
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .btn-excel { background: #15803d; color: #fff; }
+    .btn-excel:hover { background: #166534; }
+
+    .btn-print { background: #334155; color: #fff; }
+    .btn-print:hover { background: #1e293b; }
+
+    .btn-powerbi { background: #d97706; color: #fff; }
+    .btn-powerbi:hover { background: #b45309; }
+
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-danger:hover { background: #dc2626; }
+
+    /* Auto Save indicator */
+    .save-status {
+      font-size: 0.8rem;
+      color: var(--success);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--success-light);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #86efac;
     }
 
-    /* KPI Metrics Cards */
-    .metrics-grid {
+    /* KPI Summary Row */
+    .summary-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
-    .metric-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 10px 14px;
+    .summary-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
 
-    .metric-title {
-      font-size: 0.8rem;
+    .summary-box .label {
+      font-size: 0.78rem;
       color: var(--text-muted);
+      font-weight: 600;
     }
 
-    .metric-value {
-      font-size: 1.4rem;
+    .summary-box .value {
+      font-size: 1.35rem;
       font-weight: 800;
+      color: var(--text-dark);
+      margin-top: 2px;
     }
 
-    .metric-card.total .metric-value { color: #fff; }
-    .metric-card.progress .metric-value { color: var(--primary); }
-    .metric-card.matched .metric-value { color: var(--success); }
-    .metric-card.deficit .metric-value { color: var(--danger); }
-    .metric-card.surplus .metric-value { color: var(--info); }
-    .metric-card.moved .metric-value { color: var(--warning); }
+    .summary-box.matched .value { color: var(--success); }
+    .summary-box.deficit .value { color: var(--danger); }
+    .summary-box.surplus .value { color: var(--primary); }
+    .summary-box.moved .value { color: var(--warning); }
 
-    /* Controls & Filtering Bar */
-    .controls-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* SECTION FILTER TABS (Very Prominent) */
+    .section-selector-container {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
 
-    .filters-row {
+    .section-selector-header {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      justify-content: space-between;
       align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .input-group {
+    .section-title {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-stats-badge {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 0.8rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .section-buttons-grid {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+    }
+
+    .sec-tab-btn {
+      padding: 8px 16px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      color: var(--text-dark);
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      min-height: 38px;
+    }
+
+    .sec-tab-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .sec-tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary-dark);
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
+    }
+
+    /* Sub-bar: Search, Drawer Filter & Status Pills */
+    .filter-toolbar {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 10px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrapper {
+      flex: 2;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 42px;
+      padding: 8px 14px;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-dark);
+      border-radius: 5px;
+      outline: none;
+      background: #fff;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+    }
+
+    .drawer-filter-wrapper {
       flex: 1;
       min-width: 160px;
     }
 
-    .input-group label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .form-control {
-      background: #0b1120;
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 1rem;
-      min-height: 44px;
-      outline: none;
+    .select-control {
       width: 100%;
+      height: 42px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid var(--border-dark);
+      border-radius: 5px;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
     }
 
-    .form-control:focus {
+    .select-control:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
     }
 
-    .search-group {
-      flex: 2;
-      min-width: 240px;
-    }
-
-    /* Filter Pills */
-    .pills-bar {
+    .status-pills-row {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
     }
 
-    .pill {
-      background: #0b1120;
-      border: 1px solid var(--border-color);
+    .status-pill {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 8px 14px;
-      border-radius: 20px;
+      padding: 6px 12px;
+      border-radius: 4px;
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
-      min-height: 38px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
 
-    .pill.active {
-      background: var(--primary);
-      border-color: var(--primary);
+    .status-pill.active {
+      background: #334155;
+      border-color: #1e293b;
       color: #fff;
     }
 
-    /* Inventory Table Container */
-    .table-container {
-      flex: 1;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
+    /* Enterprise Data Grid Table */
+    .grid-container {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
       overflow: auto;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      flex: 1;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       text-align: right;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
-    th {
-      background: #111c30;
-      color: var(--text-muted);
+    thead th {
+      background: #f8fafc;
+      color: #334155;
       font-weight: 700;
-      padding: 12px 14px;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--border);
       position: sticky;
       top: 0;
-      z-index: 10;
-      border-bottom: 2px solid var(--border-color);
+      z-index: 5;
       white-space: nowrap;
     }
 
-    td {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border-color);
+    tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e2e8f0;
       vertical-align: middle;
+      color: var(--text-dark);
     }
 
-    tr:hover {
-      background-color: rgba(255, 255, 255, 0.02);
+    tbody tr:hover {
+      background-color: #f8fafc;
     }
 
-    /* Row Highlights */
-    tr.status-matched { background-color: rgba(16, 185, 129, 0.04); }
-    tr.status-deficit { background-color: rgba(239, 68, 68, 0.06); }
-    tr.status-surplus { background-color: rgba(6, 182, 212, 0.06); }
-    tr.status-uncounted { opacity: 0.9; }
-    tr.is-moved { border-right: 4px solid var(--warning); }
+    /* Row status classes */
+    tr.row-matched { background-color: rgba(22, 163, 74, 0.04); }
+    tr.row-deficit { background-color: rgba(220, 38, 38, 0.04); }
+    tr.row-surplus { background-color: rgba(2, 132, 199, 0.04); }
+    tr.row-moved { border-right: 4px solid var(--warning); }
 
-    .item-code {
-      font-family: monospace;
+    .code-cell {
+      font-family: 'Consolas', 'Courier New', monospace;
       font-weight: 700;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.1);
-      padding: 2px 6px;
+      color: #0369a1;
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      padding: 3px 6px;
       border-radius: 4px;
       display: inline-block;
     }
 
-    .item-name {
+    .name-cell {
       font-weight: 600;
-      color: #fff;
+      color: #0f172a;
     }
 
-    .location-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+    .location-tag {
+      display: inline-block;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: #334155;
+      padding: 3px 6px;
+      border-radius: 4px;
       font-size: 0.85rem;
-      background: #0f172a;
-      padding: 4px 8px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
+      font-weight: 600;
     }
 
-    /* Stepper & Input for actual count */
-    .qty-stepper {
+    /* Number input & stepper for tablet touch */
+    .stepper-container {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
 
-    .stepper-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background: #0f172a;
-      border: 1px solid var(--border-color);
-      color: #fff;
-      font-size: 1.2rem;
+    .step-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border-dark);
+      background: #f8fafc;
+      color: #0f172a;
+      font-size: 1.1rem;
       font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
     }
 
-    .stepper-btn:active {
-      background: var(--primary);
+    .step-btn:active {
+      background: #e2e8f0;
     }
 
-    .qty-input {
-      width: 72px;
-      height: 40px;
+    .number-box {
+      width: 65px;
+      height: 36px;
       text-align: center;
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: #0b1120;
-      color: #fff;
+      border: 1px solid var(--border-dark);
+      border-radius: 4px;
+      outline: none;
+      background: #fff;
     }
 
-    .qty-input:focus {
+    .number-box:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
     }
 
-    /* Difference Badges */
+    /* Variance badge */
     .variance-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 48px;
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 1rem;
+      min-width: 44px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.95rem;
     }
 
-    .variance-uncounted {
-      background: var(--border-color);
-      color: var(--text-muted);
-    }
+    .var-uncounted { background: #e2e8f0; color: #64748b; }
+    .var-matched { background: var(--success-light); color: var(--success); border: 1px solid #86efac; }
+    .var-deficit { background: var(--danger-light); color: var(--danger); border: 1px solid #fca5a5; }
+    .var-surplus { background: var(--info-light); color: var(--primary); border: 1px solid #bae6fd; }
 
-    .variance-matched {
-      background: var(--success-bg);
-      border: 1px solid var(--success);
-      color: var(--success);
-    }
-
-    .variance-deficit {
-      background: var(--danger-bg);
-      border: 1px solid var(--danger);
-      color: var(--danger);
-    }
-
-    .variance-surplus {
-      background: var(--info-bg);
-      border: 1px solid var(--info);
-      color: var(--info);
-    }
-
-    /* Move Drawer Select */
-    .drawer-select {
-      background: #0b1120;
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 8px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      min-height: 40px;
+    .drawer-transfer-select {
+      height: 36px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      background: #fff;
       outline: none;
       cursor: pointer;
+      max-width: 140px;
     }
 
-    .drawer-select.moved {
+    .drawer-transfer-select.is-changed {
       border-color: var(--warning);
-      background: rgba(245, 158, 11, 0.1);
-      color: #fef08a;
+      background: var(--warning-light);
+      color: #92400e;
       font-weight: bold;
     }
 
-    .match-action-btn {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid var(--success);
+    .quick-match-btn {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
       color: var(--success);
       padding: 6px 10px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
     }
 
-    .match-action-btn:active {
+    .quick-match-btn:active {
       background: var(--success);
       color: #fff;
     }
 
-    /* Modals */
-    .modal-backdrop {
+    /* Modal for unlisted item */
+    .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(4px);
-      display: flex;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(2px);
+      display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 100;
       padding: 16px;
-      display: none;
     }
 
-    .modal-backdrop.active {
-      display: flex;
-    }
+    .modal-overlay.open { display: flex; }
 
-    .modal-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
+    .modal-dialog {
+      background: #fff;
+      border-radius: 8px;
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       padding: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
+    .modal-dialog h3 {
+      font-size: 1.15rem;
+      margin-bottom: 14px;
+      color: #0f172a;
     }
 
-    .modal-header h3 {
-      font-size: 1.2rem;
-      color: #fff;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .modal-body {
+    .form-field {
+      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 4px;
     }
 
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
+    .form-field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      body { padding: 8px; }
-      header { flex-direction: column; align-items: stretch; }
-      .header-actions { justify-content: stretch; }
-      .header-actions .btn { flex: 1; }
+    .form-field input, .form-field select {
+      height: 40px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-dark);
+      border-radius: 4px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    /* PRINT STYLES (Professional Audit Report) */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+        font-size: 11pt !important;
+      }
+
+      .top-header, .section-selector-container, .filter-toolbar, .header-actions, .stepper-container button, .quick-match-btn, .save-status {
+        display: none !important;
+      }
+
+      .grid-container {
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+
+      table {
+        width: 100% !important;
+        border: 1px solid #000 !important;
+      }
+
+      th, td {
+        border: 1px solid #999 !important;
+        padding: 6px 8px !important;
+        color: #000 !important;
+      }
+
+      th {
+        background: #f0f0f0 !important;
+      }
+
+      .print-header {
+        display: block !important;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 8px;
+      }
+
+      .print-signatures {
+        display: flex !important;
+        justify-content: space-between;
+        margin-top: 40px;
+        page-break-inside: avoid;
+      }
+    }
+
+    .print-header, .print-signatures {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="brand">
-      <span class="brand-icon">📦</span>
+  <!-- Print Sheet Header -->
+  <div class="print-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
       <div>
-        <h1>منظومة الجرد المخزني الرقمي (10" Tablet)</h1>
-        <div class="brand-subtitle">نظام الجرد الميداني بدون ورق وبدون إنترنت • متوافق مع Power BI</div>
+        <h2 style="font-size: 16pt; font-weight: bold;">محضر الجرد الفعلي للمخزن</h2>
+        <div style="font-size: 10pt; margin-top: 4px;" id="printMetaDate">التاريخ: </div>
+      </div>
+      <div style="text-align: left;">
+        <div style="font-weight: bold;" id="printMetaSection">القسم: كل الأقسام</div>
+        <div id="printMetaCount">إجمالي البنود: </div>
       </div>
     </div>
-    <div class="sync-badge" id="saveBadge">
-      <span>●</span> تم الحفظ تلقائياً في التابلت
+  </div>
+
+  <!-- Enterprise Header Bar -->
+  <header class="top-header">
+    <div class="system-title">
+      <h1>منظومة جرد وإدارة المخازن (WMS)</h1>
+      <p>محضر الجرد الميداني الفعلي • بدون ورق وبدون اتصال بالإنترنت</p>
     </div>
+
+    <div class="save-status" id="saveIndicator">
+      ✓ تم الحفظ محلياً في التابلت
+    </div>
+
     <div class="header-actions">
-      <button class="btn btn-outline" onclick="triggerImport()" title="استيراد شيت الأصناف">
+      <button class="btn btn-default" onclick="triggerImport()" title="استيراد شيت الأصناف (CSV)">
         📥 استيراد بيانات
       </button>
       <input type="file" id="csvFileInput" accept=".csv, .txt" style="display: none;" onchange="handleFileImport(event)">
-      <button class="btn btn-primary" onclick="openAddModal()">
-        ➕ صنف مفاجئ
+
+      <button class="btn btn-excel" onclick="exportToExcelNative()" title="تنزيل جدول الجرد في ملف إكسيل حقيقي">
+        📄 حفظ في Excel (.xls)
       </button>
-      <button class="btn btn-success" onclick="exportPowerBIReport()">
+
+      <button class="btn btn-powerbi" onclick="exportPowerBICsv()" title="تصدير كملف CSV مهيأ لبرنامج Power BI">
         📊 تصدير لـ Power BI
       </button>
-      <button class="btn btn-danger" onclick="resetInventoryConfirm()" title="بدء جرد جديد">
-        🔄 تصفير
+
+      <button class="btn btn-print" onclick="printInventoryReport()" title="طباعة محضر الجرد أو حفظه كـ PDF">
+        🖨️ طباعة المحضر
+      </button>
+
+      <button class="btn btn-primary" onclick="openAddModal()" title="إضافة صنف وجد في الدرج غير مدرج">
+        ➕ إضافة صنف جديد
+      </button>
+
+      <button class="btn btn-danger" onclick="confirmReset()" title="تصفير الأرصدة المجرودة لبدء دورة جرد جديدة">
+        تصفير الأرصدة
       </button>
     </div>
   </header>
 
-  <!-- Metrics Dashboard -->
-  <div class="metrics-grid">
-    <div class="metric-card total">
-      <span class="metric-title">إجمالي الأصناف</span>
-      <span class="metric-value" id="statTotal">0</span>
+  <!-- Summary KPI Cards -->
+  <div class="summary-row">
+    <div class="summary-box">
+      <span class="label">إجمالي الأصناف</span>
+      <span class="value" id="kpiTotal">0</span>
     </div>
-    <div class="metric-card progress">
-      <span class="metric-title">نسبة الإنجاز</span>
-      <span class="metric-value" id="statProgress">0%</span>
+    <div class="summary-box">
+      <span class="label">نسبة الإنجاز</span>
+      <span class="value" id="kpiProgress">0%</span>
     </div>
-    <div class="metric-card matched">
-      <span class="metric-title">مطابق (0)</span>
-      <span class="metric-value" id="statMatched">0</span>
+    <div class="summary-box matched">
+      <span class="label">مطابق (0)</span>
+      <span class="value" id="kpiMatched">0</span>
     </div>
-    <div class="metric-card deficit">
-      <span class="metric-title">عجز (-)</span>
-      <span class="metric-value" id="statDeficit">0</span>
+    <div class="summary-box deficit">
+      <span class="label">عجز (-)</span>
+      <span class="value" id="kpiDeficit">0</span>
     </div>
-    <div class="metric-card surplus">
-      <span class="metric-title">زيادة (+)</span>
-      <span class="metric-value" id="statSurplus">0</span>
+    <div class="summary-box surplus">
+      <span class="label">زيادة (+)</span>
+      <span class="value" id="kpiSurplus">0</span>
     </div>
-    <div class="metric-card moved">
-      <span class="metric-title">تم نقله</span>
-      <span class="metric-value" id="statMoved">0</span>
+    <div class="summary-box moved">
+      <span class="label">أصناف تم نقلها</span>
+      <span class="value" id="kpiMoved">0</span>
     </div>
   </div>
 
-  <!-- Controls & Search -->
-  <div class="controls-panel">
-    <div class="filters-row">
-      <div class="input-group search-group">
-        <label>🔍 بحث سريع (بالكود أو اسم القطعة)</label>
-        <input type="text" id="searchInput" class="form-control" placeholder="اكتب رقم الكود أو جزء من اسم القطعة..." oninput="renderTable()">
+  <!-- SECTION SELECTOR TABS (Prominent Filter for Each Section) -->
+  <div class="section-selector-container">
+    <div class="section-selector-header">
+      <div class="section-title">
+        <span>تحديد القسم:</span>
+        <span class="section-stats-badge" id="activeSectionBadge">عرض كل الأقسام (25 صنف)</span>
       </div>
-      <div class="input-group">
-        <label>🏷️ القسم (Section)</label>
-        <select id="sectionFilter" class="form-control" onchange="onSectionFilterChange()">
-          <option value="ALL">كل الأقسام</option>
-        </select>
+      <div style="font-size: 0.8rem; color: var(--text-muted);">
+        * اضغط على أي قسم لعرض أصنافه وأدراجه فقط
       </div>
-      <div class="input-group">
-        <label>🗄️ الدرج (Drawer)</label>
-        <select id="drawerFilter" class="form-control" onchange="renderTable()">
+    </div>
+    <div class="section-buttons-grid" id="sectionButtonsGrid">
+      <!-- Section tab buttons generated via JS -->
+    </div>
+  </div>
+
+  <!-- Toolbar: Search, Drawers, Status Filter -->
+  <div class="filter-toolbar">
+    <div class="search-row">
+      <div class="search-input-wrapper">
+        <input type="text" id="filterSearch" class="search-input" placeholder="بحث سريع برقم الكود أو اسم القطعة..." oninput="renderTable()">
+      </div>
+      <div class="drawer-filter-wrapper">
+        <select id="filterDrawer" class="select-control" onchange="renderTable()">
           <option value="ALL">كل الأدراج</option>
         </select>
       </div>
     </div>
 
-    <!-- Status Filter Pills -->
-    <div class="pills-bar">
-      <div class="pill active" data-filter="ALL" onclick="setStatusFilter('ALL', this)">الكل (<span id="countPillAll">0</span>)</div>
-      <div class="pill" data-filter="UNCOUNTED" onclick="setStatusFilter('UNCOUNTED', this)">لم يجرد (<span id="countPillUncounted">0</span>)</div>
-      <div class="pill" data-filter="MATCHED" onclick="setStatusFilter('MATCHED', this)">مطابق (<span id="countPillMatched">0</span>)</div>
-      <div class="pill" data-filter="DEFICIT" onclick="setStatusFilter('DEFICIT', this)">عجز (<span id="countPillDeficit">0</span>)</div>
-      <div class="pill" data-filter="SURPLUS" onclick="setStatusFilter('SURPLUS', this)">زيادة (<span id="countPillSurplus">0</span>)</div>
-      <div class="pill" data-filter="MOVED" onclick="setStatusFilter('MOVED', this)">منقول (<span id="countPillMoved">0</span>)</div>
+    <!-- Status filter pills -->
+    <div class="status-pills-row">
+      <button class="status-pill active" data-status="ALL" onclick="setStatusFilter('ALL', this)">كل الأصناف (<span id="pillCountAll">0</span>)</button>
+      <button class="status-pill" data-status="UNCOUNTED" onclick="setStatusFilter('UNCOUNTED', this)">لم يجرد (<span id="pillCountUncounted">0</span>)</button>
+      <button class="status-pill" data-status="MATCHED" onclick="setStatusFilter('MATCHED', this)">مطابق (<span id="pillCountMatched">0</span>)</button>
+      <button class="status-pill" data-status="DEFICIT" onclick="setStatusFilter('DEFICIT', this)">عجز (<span id="pillCountDeficit">0</span>)</button>
+      <button class="status-pill" data-status="SURPLUS" onclick="setStatusFilter('SURPLUS', this)">زيادة (<span id="pillCountSurplus">0</span>)</button>
+      <button class="status-pill" data-status="MOVED" onclick="setStatusFilter('MOVED', this)">منقول لدرج آخر (<span id="pillCountMoved">0</span>)</button>
     </div>
   </div>
 
-  <!-- Table View -->
-  <div class="table-container">
-    <table>
+  <!-- Main Grid View -->
+  <div class="grid-container">
+    <table id="inventoryTable">
       <thead>
         <tr>
-          <th>كود الصنف</th>
-          <th>اسم القطعة</th>
-          <th>الموقع الأصلي</th>
-          <th style="text-align: center;">الدفتري</th>
-          <th style="text-align: center;">الرصيد الفعلي</th>
-          <th style="text-align: center;">الفرق</th>
-          <th>نقل لدرج آخر</th>
-          <th style="text-align: center;">إجراء سريع</th>
+          <th style="width: 110px;">كود الصنف</th>
+          <th>اسم الصنف / القطعة</th>
+          <th style="width: 140px;">الموقع الأصلي</th>
+          <th style="width: 90px; text-align: center;">الرصيد الدفتري</th>
+          <th style="width: 150px; text-align: center;">الرصيد الفعلي</th>
+          <th style="width: 90px; text-align: center;">الفرق</th>
+          <th style="width: 160px;">الدرج الجديد (عند النقل)</th>
+          <th style="width: 110px; text-align: center;">تثبيت فوري</th>
         </tr>
       </thead>
-      <tbody id="inventoryTableBody">
-        <!-- Rows rendered via JavaScript -->
+      <tbody id="inventoryBody">
+        <!-- Rendered via JS -->
       </tbody>
     </table>
   </div>
 
-  <!-- Add Unlisted Item Modal -->
-  <div class="modal-backdrop" id="addItemModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>➕ إضافة صنف مفاجئ / غير مدرج</h3>
-        <button class="modal-close" onclick="closeAddModal()">&times;</button>
+  <!-- Print Signatures Block -->
+  <div class="print-signatures">
+    <div style="text-align: center;">
+      <div>توقيع أمين المخزن:</div>
+      <div style="margin-top: 30px;">.........................................</div>
+    </div>
+    <div style="text-align: center;">
+      <div>عضو لجنة الجرد:</div>
+      <div style="margin-top: 30px;">.........................................</div>
+    </div>
+    <div style="text-align: center;">
+      <div>اعتماد مدير المخازن:</div>
+      <div style="margin-top: 30px;">.........................................</div>
+    </div>
+  </div>
+
+  <!-- Modal for Adding Unlisted Item -->
+  <div class="modal-overlay" id="addModalOverlay">
+    <div class="modal-dialog">
+      <h3>إضافة صنف غير مدرج / صنف مفاجئ في الدرج</h3>
+      <div class="form-field">
+        <label>كود الصنف (Item Code)</label>
+        <input type="text" id="modalCode" placeholder="مثال: 9001">
       </div>
-      <div class="modal-body">
-        <div class="input-group">
-          <label>كود الصنف (Item Code)</label>
-          <input type="text" id="newCode" class="form-control" placeholder="مثال: 9901">
+      <div class="form-field">
+        <label>اسم الصنف / القطعة</label>
+        <input type="text" id="modalName" placeholder="مثال: أويل سيل خاص">
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <div class="form-field" style="flex: 1;">
+          <label>القسم</label>
+          <select id="modalSection"></select>
         </div>
-        <div class="input-group">
-          <label>اسم الصنف / القطعة</label>
-          <input type="text" id="newName" class="form-control" placeholder="مثال: رولمان بلي غير مقيد">
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <div class="input-group">
-            <label>القسم</label>
-            <select id="newSection" class="form-control"></select>
-          </div>
-          <div class="input-group">
-            <label>الدرج</label>
-            <select id="newDrawer" class="form-control"></select>
-          </div>
-        </div>
-        <div class="input-group">
-          <label>الكمية الفعلية الموجودة</label>
-          <input type="number" id="newQty" class="form-control" value="1" min="1">
+        <div class="form-field" style="flex: 1;">
+          <label>الدرج</label>
+          <select id="modalDrawer"></select>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeAddModal()">إلغاء</button>
-        <button class="btn btn-primary" onclick="submitNewItem()">إضافة وحفظ</button>
+      <div class="form-field">
+        <label>الكمية الفعلية الموجودة</label>
+        <input type="number" id="modalQty" value="1" min="1">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button class="btn btn-default" onclick="closeAddModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitModalItem()">إضافة وحفظ</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Storage Key
     const STORAGE_KEY = 'warehouse_inventory_v1';
-    
-    // Global State
     let inventoryData = [];
-    let activeStatusFilter = 'ALL';
+    let activeSection = 'ALL';
+    let activeStatus = 'ALL';
 
-    // Fallback Initial Sample Data
-    const defaultSampleData = [
+    const defaultItems = [
       { code: "10101", name: "رولمان بلي 6204-2RS", section: "قسم 1", drawer: "درج 1", bookQty: 20, actualQty: null, newDrawer: "", moved: false },
       { code: "10102", name: "رولمان بلي 6205-ZZ", section: "قسم 1", drawer: "درج 1", bookQty: 15, actualQty: null, newDrawer: "", moved: false },
       { code: "10103", name: "رولمان بلي 6306-2RS", section: "قسم 1", drawer: "درج 2", bookQty: 8, actualQty: null, newDrawer: "", moved: false },
@@ -700,112 +823,136 @@
       { code: "10505", name: "زرار طوارئ غاطس مع إضاءة 24V", section: "قسم 5", drawer: "درج 4", bookQty: 12, actualQty: null, newDrawer: "", moved: false }
     ];
 
-    // Initialize App
     window.addEventListener('DOMContentLoaded', () => {
-      loadData();
-      populateSectionSelectors();
+      loadStorage();
+      buildSectionButtons();
+      populateDrawerFilter();
       renderTable();
     });
 
-    // Load from LocalStorage
-    function loadData() {
+    function loadStorage() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
           inventoryData = JSON.parse(saved);
         } catch (e) {
-          inventoryData = defaultSampleData;
+          inventoryData = defaultItems;
         }
       } else {
-        inventoryData = defaultSampleData;
-        saveData();
+        inventoryData = defaultItems;
+        saveStorage();
       }
     }
 
-    // Save to LocalStorage with auto indicator
-    function saveData() {
+    function saveStorage() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(inventoryData));
-      const badge = document.getElementById('saveBadge');
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      badge.innerHTML = `<span>●</span> تم الحفظ تلقائياً (${timeStr})`;
-      badge.style.borderColor = 'var(--success)';
-      updateStats();
+      const ind = document.getElementById('saveIndicator');
+      const time = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      ind.textContent = `✓ تم الحفظ محلياً (${time})`;
+      updateMetrics();
     }
 
-    // Populate Section & Drawer Filters
-    function populateSectionSelectors() {
-      const sectionFilter = document.getElementById('sectionFilter');
-      const newSection = document.getElementById('newSection');
-      
-      // Extract unique sections
+    // Build prominent section tabs
+    function buildSectionButtons() {
+      const grid = document.getElementById('sectionButtonsGrid');
+      const modalSec = document.getElementById('modalSection');
+      grid.innerHTML = '';
+      modalSec.innerHTML = '';
+
       const sections = new Set();
       inventoryData.forEach(item => {
         if (item.section) sections.add(item.section);
       });
-      // Ensure 1 to 25 exist
       for (let i = 1; i <= 25; i++) {
         sections.add(`قسم ${i}`);
       }
-      
-      const sortedSections = Array.from(sections).sort((a, b) => {
+
+      const sorted = Array.from(sections).sort((a, b) => {
         const numA = parseInt(a.replace(/\D/g, '')) || 0;
         const numB = parseInt(b.replace(/\D/g, '')) || 0;
         return numA - numB;
       });
 
-      // Clear & Populate
-      sectionFilter.innerHTML = '<option value="ALL">كل الأقسام</option>';
-      newSection.innerHTML = '';
-      sortedSections.forEach(sec => {
-        const opt1 = document.createElement('option');
-        opt1.value = sec;
-        opt1.textContent = sec;
-        sectionFilter.appendChild(opt1);
+      // "All Sections" button
+      const allBtn = document.createElement('button');
+      allBtn.className = `sec-tab-btn ${activeSection === 'ALL' ? 'active' : ''}`;
+      allBtn.textContent = 'كل الأقسام';
+      allBtn.onclick = () => selectSection('ALL');
+      grid.appendChild(allBtn);
 
-        const opt2 = document.createElement('option');
-        opt2.value = sec;
-        opt2.textContent = sec;
-        newSection.appendChild(opt2);
+      sorted.forEach(sec => {
+        const btn = document.createElement('button');
+        btn.className = `sec-tab-btn ${activeSection === sec ? 'active' : ''}`;
+        
+        // Count items in this section
+        const secItems = inventoryData.filter(x => x.section === sec);
+        btn.textContent = `${sec} (${secItems.length})`;
+        btn.onclick = () => selectSection(sec);
+        grid.appendChild(btn);
+
+        const mOpt = document.createElement('option');
+        mOpt.value = sec;
+        mOpt.textContent = sec;
+        modalSec.appendChild(mOpt);
+      });
+    }
+
+    function selectSection(sec) {
+      activeSection = sec;
+      document.querySelectorAll('.sec-tab-btn').forEach(b => {
+        if (sec === 'ALL' && b.textContent === 'كل الأقسام') b.classList.add('active');
+        else if (b.textContent.startsWith(sec + ' ') || b.textContent === sec) b.classList.add('active');
+        else b.classList.remove('active');
       });
 
-      populateDrawerOptions();
-    }
-
-    function populateDrawerOptions() {
-      const drawerFilter = document.getElementById('drawerFilter');
-      const newDrawer = document.getElementById('newDrawer');
-
-      drawerFilter.innerHTML = '<option value="ALL">كل الأدراج</option>';
-      newDrawer.innerHTML = '';
-
-      for (let d = 1; d <= 20; d++) {
-        const dName = `درج ${d}`;
-        const opt1 = document.createElement('option');
-        opt1.value = dName;
-        opt1.textContent = dName;
-        drawerFilter.appendChild(opt1);
-
-        const opt2 = document.createElement('option');
-        opt2.value = dName;
-        opt2.textContent = dName;
-        newDrawer.appendChild(opt2);
-      }
-    }
-
-    function onSectionFilterChange() {
+      populateDrawerFilter();
       renderTable();
     }
 
-    // Filter status pills
-    function setStatusFilter(filter, el) {
-      activeStatusFilter = filter;
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    function populateDrawerFilter() {
+      const select = document.getElementById('filterDrawer');
+      const modalDrw = document.getElementById('modalDrawer');
+      select.innerHTML = '<option value="ALL">كل الأدراج</option>';
+      modalDrw.innerHTML = '';
+
+      // Find available drawers in currently selected section
+      const drawers = new Set();
+      inventoryData.forEach(item => {
+        if (activeSection === 'ALL' || item.section === activeSection) {
+          if (item.drawer) drawers.add(item.drawer);
+          if (item.newDrawer) drawers.add(item.newDrawer);
+        }
+      });
+      for (let d = 1; d <= 20; d++) {
+        drawers.add(`درج ${d}`);
+      }
+
+      const sortedDrawers = Array.from(drawers).sort((a, b) => {
+        const numA = parseInt(a.replace(/\D/g, '')) || 0;
+        const numB = parseInt(b.replace(/\D/g, '')) || 0;
+        return numA - numB;
+      });
+
+      sortedDrawers.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        select.appendChild(opt);
+
+        const mOpt = document.createElement('option');
+        mOpt.value = d;
+        mOpt.textContent = d;
+        modalDrw.appendChild(mOpt);
+      });
+    }
+
+    function setStatusFilter(status, el) {
+      activeStatus = status;
+      document.querySelectorAll('.status-pill').forEach(p => p.classList.remove('active'));
       el.classList.add('active');
       renderTable();
     }
 
-    // Calculate item status
     function getItemStatus(item) {
       if (item.actualQty === null || item.actualQty === undefined || item.actualQty === '') {
         return 'UNCOUNTED';
@@ -817,117 +964,103 @@
       return 'SURPLUS';
     }
 
-    // Render Table Rows
+    // Render Table
     function renderTable() {
-      const tbody = document.getElementById('inventoryTableBody');
-      const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-      const secFilter = document.getElementById('sectionFilter').value;
-      const drwFilter = document.getElementById('drawerFilter').value;
+      const tbody = document.getElementById('inventoryBody');
+      const search = document.getElementById('filterSearch').value.trim().toLowerCase();
+      const drawerFilter = document.getElementById('filterDrawer').value;
 
       tbody.innerHTML = '';
+      let visible = 0;
 
-      // Available drawers for transfer
-      const drawerOptionsHtml = [];
-      for (let d = 1; d <= 20; d++) {
-        drawerOptionsHtml.push(`درج ${d}`);
+      // Update badge
+      const activeBadge = document.getElementById('activeSectionBadge');
+      if (activeSection === 'ALL') {
+        activeBadge.textContent = `عرض كل الأقسام (${inventoryData.length} صنف)`;
+      } else {
+        const inSec = inventoryData.filter(x => x.section === activeSection);
+        const countedInSec = inSec.filter(x => getItemStatus(x) !== 'UNCOUNTED').length;
+        activeBadge.textContent = `القسم الحالي: ${activeSection} (إجمالي: ${inSec.length} | تم جرد: ${countedInSec})`;
       }
-
-      let visibleCount = 0;
 
       inventoryData.forEach((item, index) => {
         const status = getItemStatus(item);
 
         // Section Filter
-        if (secFilter !== 'ALL' && item.section !== secFilter) return;
+        if (activeSection !== 'ALL' && item.section !== activeSection) return;
 
         // Drawer Filter
-        const effectiveDrawer = item.moved && item.newDrawer ? item.newDrawer : item.drawer;
-        if (drwFilter !== 'ALL' && effectiveDrawer !== drwFilter && item.drawer !== drwFilter) return;
+        const currDrawer = item.moved && item.newDrawer ? item.newDrawer : item.drawer;
+        if (drawerFilter !== 'ALL' && currDrawer !== drawerFilter && item.drawer !== drawerFilter) return;
 
         // Status Filter
-        if (activeStatusFilter === 'MOVED' && !item.moved) return;
-        if (activeStatusFilter !== 'ALL' && activeStatusFilter !== 'MOVED' && status !== activeStatusFilter) return;
+        if (activeStatus === 'MOVED' && !item.moved) return;
+        if (activeStatus !== 'ALL' && activeStatus !== 'MOVED' && status !== activeStatus) return;
 
-        // Search Term Filter
-        if (searchTerm) {
-          const matchCode = (item.code || '').toLowerCase().includes(searchTerm);
-          const matchName = (item.name || '').toLowerCase().includes(searchTerm);
+        // Search Filter
+        if (search) {
+          const matchCode = (item.code || '').toLowerCase().includes(search);
+          const matchName = (item.name || '').toLowerCase().includes(search);
           if (!matchCode && !matchName) return;
         }
 
-        visibleCount++;
+        visible++;
 
-        // Variance & Badges
-        let diff = null;
-        let diffHtml = '<span class="variance-badge variance-uncounted">-</span>';
-        let rowClass = 'status-uncounted';
+        // Variance
+        let diffHtml = '<span class="variance-badge var-uncounted">-</span>';
+        let rowClass = '';
 
         if (status !== 'UNCOUNTED') {
-          diff = Number(item.actualQty) - Number(item.bookQty);
+          const diff = Number(item.actualQty) - Number(item.bookQty);
           if (diff === 0) {
-            diffHtml = '<span class="variance-badge variance-matched">0</span>';
-            rowClass = 'status-matched';
+            diffHtml = '<span class="variance-badge var-matched">0</span>';
+            rowClass = 'row-matched';
           } else if (diff < 0) {
-            diffHtml = `<span class="variance-badge variance-deficit">${diff}</span>`;
-            rowClass = 'status-deficit';
+            diffHtml = `<span class="variance-badge var-deficit">${diff}</span>`;
+            rowClass = 'row-deficit';
           } else {
-            diffHtml = `<span class="variance-badge variance-surplus">+${diff}</span>`;
-            rowClass = 'status-surplus';
+            diffHtml = `<span class="variance-badge var-surplus">+${diff}</span>`;
+            rowClass = 'row-surplus';
           }
         }
 
-        if (item.moved) {
-          rowClass += ' is-moved';
-        }
+        if (item.moved) rowClass += ' row-moved';
 
-        // Drawers options select
-        let drawerSelectHtml = `<select class="drawer-select ${item.moved ? 'moved' : ''}" onchange="changeItemDrawer(${index}, this.value)">`;
-        drawerSelectHtml += `<option value="">(الدرج الأصلي: ${item.drawer})</option>`;
-        drawerOptionsHtml.forEach(d => {
-          const isSelected = item.newDrawer === d;
-          drawerSelectHtml += `<option value="${d}" ${isSelected ? 'selected' : ''}>${d} ${d === item.drawer ? '★ الأصلي' : ''}</option>`;
-        });
-        drawerSelectHtml += `</select>`;
+        // Drawer Transfer Select
+        let drawerSelect = `<select class="drawer-transfer-select ${item.moved ? 'is-changed' : ''}" onchange="transferDrawer(${index}, this.value)">`;
+        drawerSelect += `<option value="">(الدرج الأصلي: ${item.drawer})</option>`;
+        for (let d = 1; d <= 20; d++) {
+          const dName = `درج ${d}`;
+          const isSel = item.newDrawer === dName;
+          drawerSelect += `<option value="${dName}" ${isSel ? 'selected' : ''}>${dName} ${dName === item.drawer ? '★ الأصلي' : ''}</option>`;
+        }
+        drawerSelect += `</select>`;
 
         const tr = document.createElement('tr');
         tr.className = rowClass;
         tr.innerHTML = `
-          <td><span class="item-code">${escapeHtml(item.code)}</span></td>
-          <td>
-            <div class="item-name">${escapeHtml(item.name)}</div>
-          </td>
-          <td>
-            <div class="location-badge">
-              <span>🏷️ ${escapeHtml(item.section)}</span>
-              <span>•</span>
-              <span>🗄️ ${escapeHtml(item.drawer)}</span>
-            </div>
-          </td>
-          <td style="text-align: center; font-weight: 700; font-size: 1.1rem;">
-            ${item.bookQty}
-          </td>
+          <td><span class="code-cell">${escapeHtml(item.code)}</span></td>
+          <td><span class="name-cell">${escapeHtml(item.name)}</span></td>
+          <td><span class="location-tag">${escapeHtml(item.section)} • ${escapeHtml(item.drawer)}</span></td>
+          <td style="text-align: center; font-weight: 700;">${item.bookQty}</td>
           <td style="text-align: center;">
-            <div class="qty-stepper">
-              <button class="stepper-btn" onclick="stepQty(${index}, -1)" title="تقليل">-</button>
+            <div class="stepper-container">
+              <button class="step-btn" onclick="stepQty(${index}, -1)">-</button>
               <input type="number" 
-                     class="qty-input" 
+                     class="number-box" 
                      value="${item.actualQty !== null ? item.actualQty : ''}" 
-                     placeholder="-"
+                     placeholder="-" 
                      min="0"
                      inputmode="numeric"
-                     onchange="updateActualQty(${index}, this.value)"
+                     onchange="setQty(${index}, this.value)"
                      onfocus="this.select()">
-              <button class="stepper-btn" onclick="stepQty(${index}, 1)" title="زيادة">+</button>
+              <button class="step-btn" onclick="stepQty(${index}, 1)">+</button>
             </div>
           </td>
+          <td style="text-align: center;">${diffHtml}</td>
+          <td>${drawerSelect}</td>
           <td style="text-align: center;">
-            ${diffHtml}
-          </td>
-          <td>
-            ${drawerSelectHtml}
-          </td>
-          <td style="text-align: center;">
-            <button class="match-action-btn" onclick="setAsMatched(${index})" title="تعيين الفعلي = الدفتري">
+            <button class="quick-match-btn" onclick="quickMatch(${index})">
               ✓ مطابق (${item.bookQty})
             </button>
           </td>
@@ -935,41 +1068,32 @@
         tbody.appendChild(tr);
       });
 
-      if (visibleCount === 0) {
+      if (visible === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
-              <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
-              <div>لا توجد أصناف تطابق شروط البحث أو الفلتر المحددة</div>
+            <td colspan="8" style="text-align: center; padding: 35px; color: var(--text-muted);">
+              لا توجد أصناف تطابق شروط البحث أو الفلتر المحددة في هذا القسم
             </td>
           </tr>
         `;
       }
 
-      updateStats();
+      updateMetrics();
     }
 
-    // Safe HTML Escape
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/[&<>"']/g, m => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[m]));
+    function escapeHtml(s) {
+      if (!s) return '';
+      return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
     }
 
-    // Input handlers
-    function updateActualQty(index, value) {
-      if (value === '' || value === null) {
+    function setQty(index, val) {
+      if (val === '' || val === null) {
         inventoryData[index].actualQty = null;
       } else {
-        inventoryData[index].actualQty = Math.max(0, parseInt(value, 10) || 0);
+        inventoryData[index].actualQty = Math.max(0, parseInt(val, 10) || 0);
       }
       inventoryData[index].timestamp = new Date().toISOString();
-      saveData();
+      saveStorage();
       renderTable();
     }
 
@@ -978,114 +1102,263 @@
       if (current === null || current === undefined) {
         current = inventoryData[index].bookQty || 0;
       }
-      let newVal = Math.max(0, Number(current) + delta);
-      inventoryData[index].actualQty = newVal;
+      inventoryData[index].actualQty = Math.max(0, Number(current) + delta);
       inventoryData[index].timestamp = new Date().toISOString();
-      saveData();
+      saveStorage();
       renderTable();
     }
 
-    function setAsMatched(index) {
+    function quickMatch(index) {
       inventoryData[index].actualQty = inventoryData[index].bookQty;
       inventoryData[index].timestamp = new Date().toISOString();
-      saveData();
+      saveStorage();
       renderTable();
     }
 
-    function changeItemDrawer(index, newDrawerVal) {
-      if (!newDrawerVal || newDrawerVal === inventoryData[index].drawer) {
+    function transferDrawer(index, newD) {
+      if (!newD || newD === inventoryData[index].drawer) {
         inventoryData[index].newDrawer = "";
         inventoryData[index].moved = false;
       } else {
-        inventoryData[index].newDrawer = newDrawerVal;
+        inventoryData[index].newDrawer = newD;
         inventoryData[index].moved = true;
       }
-      saveData();
+      saveStorage();
       renderTable();
     }
 
-    // Update Metrics Dashboard & Pills
-    function updateStats() {
+    function updateMetrics() {
       const total = inventoryData.length;
-      let uncounted = 0;
-      let matched = 0;
-      let deficit = 0;
-      let surplus = 0;
-      let moved = 0;
+      let uncounted = 0, matched = 0, deficit = 0, surplus = 0, moved = 0;
 
       inventoryData.forEach(item => {
         if (item.moved) moved++;
-        const status = getItemStatus(item);
-        if (status === 'UNCOUNTED') uncounted++;
-        else if (status === 'MATCHED') matched++;
-        else if (status === 'DEFICIT') deficit++;
-        else if (status === 'SURPLUS') surplus++;
+        const s = getItemStatus(item);
+        if (s === 'UNCOUNTED') uncounted++;
+        else if (s === 'MATCHED') matched++;
+        else if (s === 'DEFICIT') deficit++;
+        else if (s === 'SURPLUS') surplus++;
       });
 
       const counted = total - uncounted;
-      const progressPercent = total > 0 ? Math.round((counted / total) * 100) : 0;
+      const pct = total > 0 ? Math.round((counted / total) * 100) : 0;
 
-      document.getElementById('statTotal').textContent = total;
-      document.getElementById('statProgress').textContent = `${progressPercent}%`;
-      document.getElementById('statMatched').textContent = matched;
-      document.getElementById('statDeficit').textContent = deficit;
-      document.getElementById('statSurplus').textContent = surplus;
-      document.getElementById('statMoved').textContent = moved;
+      document.getElementById('kpiTotal').textContent = total;
+      document.getElementById('kpiProgress').textContent = `${pct}%`;
+      document.getElementById('kpiMatched').textContent = matched;
+      document.getElementById('kpiDeficit').textContent = deficit;
+      document.getElementById('kpiSurplus').textContent = surplus;
+      document.getElementById('kpiMoved').textContent = moved;
 
-      // Pills Counts
-      document.getElementById('countPillAll').textContent = total;
-      document.getElementById('countPillUncounted').textContent = uncounted;
-      document.getElementById('countPillMatched').textContent = matched;
-      document.getElementById('countPillDeficit').textContent = deficit;
-      document.getElementById('countPillSurplus').textContent = surplus;
-      document.getElementById('countPillMoved').textContent = moved;
+      document.getElementById('pillCountAll').textContent = total;
+      document.getElementById('pillCountUncounted').textContent = uncounted;
+      document.getElementById('pillCountMatched').textContent = matched;
+      document.getElementById('pillCountDeficit').textContent = deficit;
+      document.getElementById('pillCountSurplus').textContent = surplus;
+      document.getElementById('pillCountMoved').textContent = moved;
     }
 
-    // Modal Operations
+    // Modal
     function openAddModal() {
-      document.getElementById('addItemModal').classList.add('active');
-      document.getElementById('newCode').focus();
+      document.getElementById('addModalOverlay').classList.add('open');
+      document.getElementById('modalCode').focus();
     }
 
     function closeAddModal() {
-      document.getElementById('addItemModal').classList.remove('active');
-      document.getElementById('newCode').value = '';
-      document.getElementById('newName').value = '';
-      document.getElementById('newQty').value = '1';
+      document.getElementById('addModalOverlay').classList.remove('open');
+      document.getElementById('modalCode').value = '';
+      document.getElementById('modalName').value = '';
+      document.getElementById('modalQty').value = '1';
     }
 
-    function submitNewItem() {
-      const code = document.getElementById('newCode').value.trim() || `NEW-${Date.now().toString().slice(-4)}`;
-      const name = document.getElementById('newName').value.trim();
-      const section = document.getElementById('newSection').value;
-      const drawer = document.getElementById('newDrawer').value;
-      const qty = parseInt(document.getElementById('newQty').value, 10) || 1;
+    function submitModalItem() {
+      const code = document.getElementById('modalCode').value.trim() || `ITM-${Date.now().toString().slice(-4)}`;
+      const name = document.getElementById('modalName').value.trim();
+      const sec = document.getElementById('modalSection').value;
+      const drw = document.getElementById('modalDrawer').value;
+      const qty = parseInt(document.getElementById('modalQty').value, 10) || 1;
 
       if (!name) {
-        alert('يرجى كتابة اسم الصنف / القطعة');
+        alert('يرجى إدخال اسم الصنف');
         return;
       }
 
-      const newItem = {
+      inventoryData.unshift({
         code: code,
         name: name,
-        section: section,
-        drawer: drawer,
-        bookQty: 0, // Not in original book record -> treated as surplus
+        section: sec,
+        drawer: drw,
+        bookQty: 0,
         actualQty: qty,
         newDrawer: "",
         moved: false,
-        isUnlisted: true,
         timestamp: new Date().toISOString()
-      };
+      });
 
-      inventoryData.unshift(newItem);
-      saveData();
+      saveStorage();
       closeAddModal();
+      buildSectionButtons();
       renderTable();
     }
 
-    // File Import Handling (CSV)
+    // 1. SAVE TO NATIVE EXCEL (.XLS HTML-Table format)
+    function exportToExcelNative() {
+      if (inventoryData.length === 0) {
+        alert('لا توجد بيانات للتصدير');
+        return;
+      }
+
+      let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <!--[if gte mso 9]>
+        <xml>
+          <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+              <x:ExcelWorksheet>
+                <x:Name>محضر الجرد</x:Name>
+                <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+              </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+          </x:ExcelWorkbook>
+        </xml>
+        <![endif]-->
+        <style>
+          th { background: #0284c7; color: #ffffff; font-weight: bold; padding: 6px; border: 1px solid #cbd5e1; }
+          td { border: 1px solid #cbd5e1; padding: 6px; font-family: Arial, sans-serif; }
+          .num { mso-number-format:"\\#\\,\\#\\#0"; }
+          .matched { background: #dcfce7; }
+          .deficit { background: #fee2e2; }
+          .surplus { background: #e0f2fe; }
+        </style>
+      </head>
+      <body dir="rtl">
+        <h2>محضر الجرد الفعلي للمخزن - تاريخ: ${new Date().toLocaleDateString('ar-EG')}</h2>
+        <table border="1">
+          <thead>
+            <tr>
+              <th>كود الصنف</th>
+              <th>اسم الصنف</th>
+              <th>القسم الأصلي</th>
+              <th>الدرج الأصلي</th>
+              <th>الرصيد الدفتري</th>
+              <th>الرصيد الفعلي</th>
+              <th>فرق الجرد</th>
+              <th>حالة الجرد</th>
+              <th>تم النقل؟</th>
+              <th>الدرج الجديد</th>
+              <th>تاريخ ووقت التسجيل</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+      inventoryData.forEach(item => {
+        const s = getItemStatus(item);
+        const isCounted = s !== 'UNCOUNTED';
+        const act = isCounted ? Number(item.actualQty) : "";
+        const diff = isCounted ? (Number(item.actualQty) - Number(item.bookQty)) : "";
+        let sName = "لم يجرد";
+        let rowClass = "";
+        if (s === 'MATCHED') { sName = "مطابق"; rowClass = "matched"; }
+        else if (s === 'DEFICIT') { sName = "عجز"; rowClass = "deficit"; }
+        else if (s === 'SURPLUS') { sName = "زيادة"; rowClass = "surplus"; }
+
+        html += `<tr class="${rowClass}">
+          <td>${item.code}</td>
+          <td>${item.name}</td>
+          <td>${item.section}</td>
+          <td>${item.drawer}</td>
+          <td class="num">${item.bookQty}</td>
+          <td class="num">${act}</td>
+          <td class="num">${diff}</td>
+          <td>${sName}</td>
+          <td>${item.moved ? 'نعم' : 'لا'}</td>
+          <td>${item.moved && item.newDrawer ? item.newDrawer : item.drawer}</td>
+          <td>${item.timestamp || ''}</td>
+        </tr>`;
+      });
+
+      html += `</tbody></table></body></html>`;
+
+      const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const d = new Date().toISOString().slice(0, 10);
+      link.href = url;
+      link.download = `Inventory_Report_${d}.xls`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // 2. EXPORT TO POWER BI (UTF-8 BOM CSV)
+    function exportPowerBICsv() {
+      if (inventoryData.length === 0) return;
+
+      const headers = [
+        "Item_Code", "Item_Name", "Original_Section", "Original_Drawer", 
+        "Book_Qty", "Actual_Qty", "Variance_Qty", "Status_Arabic", 
+        "Status_English", "Is_Counted", "Is_Moved", "New_Section", "New_Drawer", "Timestamp"
+      ];
+
+      const rows = [headers.join(",")];
+
+      inventoryData.forEach(item => {
+        const s = getItemStatus(item);
+        const isCounted = s !== 'UNCOUNTED';
+        const actual = isCounted ? Number(item.actualQty) : "";
+        const variance = isCounted ? (Number(item.actualQty) - Number(item.bookQty)) : "";
+        
+        let ar = "لم يجرد", en = "Uncounted";
+        if (s === 'MATCHED') { ar = "مطابق"; en = "Matched"; }
+        else if (s === 'DEFICIT') { ar = "عجز"; en = "Deficit"; }
+        else if (s === 'SURPLUS') { ar = "زيادة"; en = "Surplus"; }
+
+        rows.push([
+          `"${(item.code || '').replace(/"/g, '""')}"`,
+          `"${(item.name || '').replace(/"/g, '""')}"`,
+          `"${(item.section || '').replace(/"/g, '""')}"`,
+          `"${(item.drawer || '').replace(/"/g, '""')}"`,
+          item.bookQty,
+          actual !== "" ? actual : "",
+          variance !== "" ? variance : "",
+          `"${ar}"`,
+          `"${en}"`,
+          isCounted ? "1" : "0",
+          item.moved ? "1" : "0",
+          `"${(item.section || '').replace(/"/g, '""')}"`,
+          `"${(item.moved && item.newDrawer ? item.newDrawer : item.drawer).replace(/"/g, '""')}"`,
+          `"${item.timestamp || new Date().toISOString()}"`
+        ].join(","));
+      });
+
+      const csv = "\uFEFF" + rows.join("\r\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const d = new Date().toISOString().slice(0, 10);
+      link.href = url;
+      link.download = `Warehouse_PowerBI_Dataset_${d}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // 3. PRINT REPORT
+    function printInventoryReport() {
+      const now = new Date();
+      document.getElementById('printMetaDate').textContent = `تاريخ ووقت الطباعة: ${now.toLocaleDateString('ar-EG')} - ${now.toLocaleTimeString('ar-EG')}`;
+      document.getElementById('printMetaSection').textContent = activeSection === 'ALL' ? 'القسم: كل الأقسام' : `القسم: ${activeSection}`;
+      
+      const inViewCount = document.querySelectorAll('#inventoryBody tr').length;
+      document.getElementById('printMetaCount').textContent = `عدد الأصناف المطبوعة: ${inViewCount}`;
+
+      window.print();
+    }
+
+    // IMPORT CSV
     function triggerImport() {
       document.getElementById('csvFileInput').click();
     }
@@ -1095,151 +1368,62 @@
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(event) {
-        const text = event.target.result;
-        parseAndLoadCSV(text);
+      reader.onload = function(evt) {
+        const text = evt.target.result;
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+        if (lines.length < 2) {
+          alert('الملف لا يحتوي على بيانات كافية');
+          return;
+        }
+
+        const delimiter = lines[0].includes(';') ? ';' : (lines[0].includes('\t') ? '\t' : ',');
+        const headers = lines[0].split(delimiter).map(h => h.trim().toLowerCase().replace(/"/g, ''));
+
+        const codeIdx = headers.findIndex(h => h.includes('code') || h.includes('كود') || h.includes('رقم'));
+        const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('اسم') || h.includes('صنف') || h.includes('قطعة'));
+        const secIdx = headers.findIndex(h => h.includes('sec') || h.includes('قسم'));
+        const drwIdx = headers.findIndex(h => h.includes('draw') || h.includes('درج'));
+        const qtyIdx = headers.findIndex(h => h.includes('qty') || h.includes('book') || h.includes('رصيد') || h.includes('كمية'));
+
+        const items = [];
+        for (let i = 1; i < lines.length; i++) {
+          const row = lines[i].split(delimiter).map(c => c.trim().replace(/^"|"$/g, ''));
+          if (row.length < 2) continue;
+
+          items.push({
+            code: codeIdx !== -1 ? row[codeIdx] : row[0],
+            name: nameIdx !== -1 ? row[nameIdx] : row[1],
+            section: secIdx !== -1 ? row[secIdx] : (row[2] || 'قسم 1'),
+            drawer: drwIdx !== -1 ? row[drwIdx] : (row[3] || 'درج 1'),
+            bookQty: qtyIdx !== -1 ? (parseInt(row[qtyIdx], 10) || 0) : (parseInt(row[4], 10) || 0),
+            actualQty: null,
+            newDrawer: "",
+            moved: false
+          });
+        }
+
+        if (items.length > 0) {
+          if (confirm(`تم قراءة ${items.length} صنف. هل تريد تحميل هذه البيانات واستبدال الجرد الحالي؟`)) {
+            inventoryData = items;
+            saveStorage();
+            buildSectionButtons();
+            populateDrawerFilter();
+            renderTable();
+            alert('تم تحميل البيانات بنجاح!');
+          }
+        }
       };
       reader.readAsText(file);
     }
 
-    function parseAndLoadCSV(text) {
-      const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
-      if (lines.length < 2) {
-        alert('الملف فارغ أو لا يحتوي على صفوف بيانات كافية.');
-        return;
-      }
-
-      // Simple CSV parse with header detection
-      const delimiter = lines[0].includes(';') ? ';' : (lines[0].includes('\t') ? '\t' : ',');
-      const headers = lines[0].split(delimiter).map(h => h.trim().toLowerCase().replace(/"/g, ''));
-
-      const codeIdx = headers.findIndex(h => h.includes('code') || h.includes('كود') || h.includes('رقم'));
-      const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('اسم') || h.includes('قطعة') || h.includes('صنف'));
-      const secIdx = headers.findIndex(h => h.includes('sec') || h.includes('قسم'));
-      const drwIdx = headers.findIndex(h => h.includes('draw') || h.includes('درج'));
-      const qtyIdx = headers.findIndex(h => h.includes('qty') || h.includes('book') || h.includes('كمية') || h.includes('رصيد'));
-
-      const newItems = [];
-
-      for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(delimiter).map(c => c.trim().replace(/^"|"$/g, ''));
-        if (row.length < 2) continue;
-
-        const code = codeIdx !== -1 ? row[codeIdx] : row[0];
-        const name = nameIdx !== -1 ? row[nameIdx] : row[1];
-        const section = secIdx !== -1 ? row[secIdx] : (row[2] || 'قسم 1');
-        const drawer = drwIdx !== -1 ? row[drwIdx] : (row[3] || 'درج 1');
-        const bookQty = qtyIdx !== -1 ? (parseInt(row[qtyIdx], 10) || 0) : (parseInt(row[4], 10) || 0);
-
-        newItems.push({
-          code: code || `ITEM-${i}`,
-          name: name || `قطعة ${i}`,
-          section: section || 'قسم 1',
-          drawer: drawer || 'درج 1',
-          bookQty: bookQty,
-          actualQty: null,
-          newDrawer: "",
-          moved: false
-        });
-      }
-
-      if (newItems.length > 0) {
-        if (confirm(`تم قراءة ${newItems.length} صنف من الملف بنجاح. هل تريد استبدال الجرد الحالي بهذه البيانات؟`)) {
-          inventoryData = newItems;
-          saveData();
-          populateSectionSelectors();
-          renderTable();
-          alert('تم استيراد البيانات بنجاح!');
-        }
-      } else {
-        alert('لم يتم العثور على بيانات صالحة في الملف.');
-      }
-    }
-
-    // Export Power BI Ready Report (CSV with UTF-8 BOM)
-    function exportPowerBIReport() {
-      if (inventoryData.length === 0) {
-        alert('لا توجد بيانات للتصدير!');
-        return;
-      }
-
-      // Headers formatted for Power BI
-      const headers = [
-        "Item_Code",
-        "Item_Name",
-        "Original_Section",
-        "Original_Drawer",
-        "Book_Qty",
-        "Actual_Qty",
-        "Variance_Qty",
-        "Status_Arabic",
-        "Status_English",
-        "Is_Counted",
-        "Is_Moved",
-        "New_Section",
-        "New_Drawer",
-        "Timestamp"
-      ];
-
-      const rows = [];
-      rows.push(headers.join(","));
-
-      inventoryData.forEach(item => {
-        const status = getItemStatus(item);
-        const isCounted = status !== 'UNCOUNTED';
-        const actual = isCounted ? Number(item.actualQty) : "";
-        const variance = isCounted ? (Number(item.actualQty) - Number(item.bookQty)) : "";
-        
-        let statusAr = "لم يجرد";
-        let statusEn = "Uncounted";
-        if (status === 'MATCHED') { statusAr = "مطابق"; statusEn = "Matched"; }
-        else if (status === 'DEFICIT') { statusAr = "عجز"; statusEn = "Deficit"; }
-        else if (status === 'SURPLUS') { statusAr = "زيادة"; statusEn = "Surplus"; }
-
-        const row = [
-          `"${(item.code || '').replace(/"/g, '""')}"`,
-          `"${(item.name || '').replace(/"/g, '""')}"`,
-          `"${(item.section || '').replace(/"/g, '""')}"`,
-          `"${(item.drawer || '').replace(/"/g, '""')}"`,
-          item.bookQty,
-          actual !== "" ? actual : "",
-          variance !== "" ? variance : "",
-          `"${statusAr}"`,
-          `"${statusEn}"`,
-          isCounted ? "1" : "0",
-          item.moved ? "1" : "0",
-          `"${(item.section || '').replace(/"/g, '""')}"`,
-          `"${(item.moved && item.newDrawer ? item.newDrawer : item.drawer).replace(/"/g, '""')}"`,
-          `"${item.timestamp || new Date().toISOString()}"`
-        ];
-
-        rows.push(row.join(","));
-      });
-
-      const csvContent = "\uFEFF" + rows.join("\r\n"); // Add UTF-8 BOM for Excel & Power BI Arabic support
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      
-      const dateStr = new Date().toISOString().slice(0, 10);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `Warehouse_Inventory_PowerBI_${dateStr}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-
-    // Reset Inventory confirmation
-    function resetInventoryConfirm() {
-      const choice = confirm("⚠️ تنبيه: هل تريد إعادة تعيين الأرصدة المجرودة إلى (غير مجرود)؟\n\n- اضغط OK لتصفير الأرصدة الفعلية مع الإبقاء على الأصناف.\n- اضغط Cancel للإلغاء.");
-      if (choice) {
+    function confirmReset() {
+      if (confirm('تنبيه: هل تريد تصفير الأرصدة المجرودة والبدء من جديد مع الاحتفاظ بالأصناف؟')) {
         inventoryData.forEach(item => {
           item.actualQty = null;
           item.newDrawer = "";
           item.moved = false;
         });
-        saveData();
+        saveStorage();
         renderTable();
       }
     }
